@@ -1,17 +1,17 @@
 
-// const axios = require('axios').default;
+let myChart
 
 const printChart = bitCoinData => {
     console.log(bitCoinData);
     // x axis
     const daysInMonth = Object.keys(bitCoinData.data.bpi)
     console.log(daysInMonth);
-
+    
     // y axis
     const valuesPerDay = Object.values(bitCoinData.data.bpi)
     console.log(valuesPerDay);
-
-    const myChart = new Chart(ctx, {
+    
+    myChart = new Chart(ctx, {
         type: 'line',
         data: {
             labels: daysInMonth,
@@ -33,20 +33,44 @@ const printChart = bitCoinData => {
     });
 }
 
+
 axios.get('http://api.coindesk.com/v1/bpi/historical/close.json')
-  .then(function (response) {
+.then(function (response) {
     // handle success
     printChart(response)
-  })
-  .catch(function (error) {
+    
+})
+.catch(function (error) {
     // handle error
     console.log(error);
-  })
-  .then(function () {
+})
+.then(function () {
     // always executed
-  });
-
+   
+});
 
 
 const ctx = document.getElementById('myChart').getContext('2d');
+
+document.getElementById('submitButton').addEventListener('click', timeRange)
+
+function timeRange() {
+    let startDate = document.querySelector('#startInput').value
+    let endDate = document.querySelector('#endInput').value
+
+    myChart.destroy()
+
+    axios.get(`http://api.coindesk.com/v1/bpi/historical/close.json?start=${startDate}&end=${endDate}&currency=eur`)
+    .then(function (response) {
+        // handle success
+        printChart(response)
+    })
+    .catch(function (error) {
+        // handle error
+        console.log(error);
+    })
+    .then(function () {
+        // always executed
+    });
+}
 
